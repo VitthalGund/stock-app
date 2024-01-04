@@ -7,6 +7,7 @@ import cors from "cors";
 import { allowedOrigins } from "./config/allowedOrigins";
 import "dotenv/config";
 export const pathOfData = path.join(__dirname, "/data/stock.json");
+export const pathOfDataBackUp = path.join(__dirname, "/data/backup.json");
 
 // Cross Origin Resource Sharing
 app.use(

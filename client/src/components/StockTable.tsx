@@ -9,7 +9,7 @@ const StockTable = () => {
     const [stock, setStock] = useState<stock[]>();
     const [number, setNumber] = useState<number>(0);
     const [clicked, setClicked] = useState<boolean>(false)
-
+    let num: number = 0;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const assigndata = (resp: AxiosResponse<any, any>) => {
@@ -35,8 +35,9 @@ const StockTable = () => {
                 return;
             }
             setClicked(false)
+            num = number;
             const resp = await toast.promise(axios.post(`/stocks/info`, {
-                no: number
+                no: num
             }), {
                 pending: "geting your stock",
                 success: "stock information fetech Successfully",
@@ -59,10 +60,13 @@ const StockTable = () => {
             if (!clicked) {
                 return;
             }
+            if (num === 0) {
+                return;
+            }
 
             try {
                 const resp = await axios.post(`/stocks/info`, {
-                    no: number
+                    no: num
                 })
                 assigndata(resp);
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,9 +75,8 @@ const StockTable = () => {
             }
         }, 1000)
 
-        setClicked(false)
-        return clearInterval(id);
-    }, [clicked, number])
+        if (!clicked) clearInterval(id);
+    }, [clicked, number, num])
 
 
     return (

@@ -11,10 +11,6 @@ const router = express.Router();
 
 const interval = new Map<string, NodeJS.Timeout>();
 
-router.get("/", async (req: express.Request, res: express.Response) => {
-  res.json({ message: "hello" });
-});
-
 router.post("/info", async (req: express.Request, res: express.Response) => {
   try {
     let { no } = req.body;
@@ -23,8 +19,9 @@ router.post("/info", async (req: express.Request, res: express.Response) => {
         .status(400)
         .json({ message: "missing number", success: false });
     }
-    const stockData: stockList = await fetchStockData(no);
 
+    const stockData: stockList = await fetchStockData(no);
+    stockData.length = no;
     // Generate refresh intervals
     const refreshIntervals = generateRefreshIntervals(stockData.length);
 

@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "node:fs";
-import { pathOfData } from "..";
+import { pathOfData, pathOfDataBackUp } from "..";
 import { stock, stockList } from "../types/stock";
 import { Mutex } from "async-mutex";
 const mutex = new Mutex();
@@ -69,11 +69,22 @@ export const fetchStockPrices = async (): Promise<stockList> => {
   const rawData = await fs.promises.readFile(pathOfData);
   const stringData = rawData.toString().trim();
   if (!stringData) {
-    return stock;
+    return await readBackUp();
   }
   stock = JSON.parse(stringData);
   // console.log(data);
   // console.log("utils fetchStockPrices: " + typeof data);
   mutex.release();
   return stock;
+};
+
+const readBackUp = async () => {
+  if (mutex.isLocked()) {
+    await mutex.waitForUnlock();
+  }
+  await mutex.acquire();
+  const fileData = await fs.promises.readFile(pathOfDataBackUp);
+  const stringData = fileData.toString().trim();
+  mutex.release();
+  return JSON.parse(stringData);
 };

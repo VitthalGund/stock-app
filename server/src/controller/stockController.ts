@@ -15,7 +15,7 @@ export const fetchStockData = async (n: number) => {
     // console.log(response.data);
     return response.data.results;
   } catch (error: any) {
-    console.log("controller: " + error.message);
-    return fetchStockPrices();
+    // console.log("controller: " + error.message);
+    return await fetchStockPrices();
   }
 };
