@@ -8,9 +8,9 @@ import { AxiosResponse } from "axios";
 const StockTable = () => {
     const [stock, setStock] = useState<stock[]>();
     const [number, setNumber] = useState<number>(0);
+    const [num, setNum] = useState<number>(0);
     const [clicked, setClicked] = useState<boolean>(false)
-    let num: number = 0;
-
+    const abort = new AbortController()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const assigndata = (resp: AxiosResponse<any, any>) => {
         const data: stock[] = resp.data.map((data: stock) => {
@@ -35,14 +35,15 @@ const StockTable = () => {
                 return;
             }
             setClicked(false)
-            num = number;
+            setNum(number);
             const resp = await toast.promise(axios.post(`/stocks/info`, {
                 no: num
-            }), {
+            }, { signal: abort.signal }), {
                 pending: "geting your stock",
                 success: "stock information fetech Successfully",
                 error: "unable get stock information",
             });
+            console.log(resp)
             assigndata(resp)
             setClicked(true)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

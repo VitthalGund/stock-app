@@ -78,7 +78,7 @@ export const fetchStockPrices = async (): Promise<stockList> => {
   return stock;
 };
 
-const readBackUp = async () => {
+export const readBackUp = async () => {
   if (mutex.isLocked()) {
     await mutex.waitForUnlock();
   }

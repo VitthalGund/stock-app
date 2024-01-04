@@ -3,6 +3,7 @@ import { fetchStockData } from "../controller/stockController";
 import {
   fetchStockPrices,
   generateRefreshIntervals,
+  readBackUp,
   storeDataInFile,
   updateStockPrice,
 } from "../utils";
@@ -20,7 +21,10 @@ router.post("/info", async (req: express.Request, res: express.Response) => {
         .json({ message: "missing number", success: false });
     }
 
-    const stockData: stockList = await fetchStockData(no);
+    let stockData: stockList = await fetchStockData(no);
+    if (stockData.length < no) {
+      stockData = await readBackUp();
+    }
     stockData.length = no;
     // Generate refresh intervals
     const refreshIntervals = generateRefreshIntervals(stockData.length);
@@ -36,7 +40,6 @@ router.post("/info", async (req: express.Request, res: express.Response) => {
     // console.log(stocksWithRefreshIntervals);
     // Store data in the backend file
     await storeDataInFile(stocksWithRefreshIntervals);
-    stocksWithRefreshIntervals.length = no;
     // Set up interval to update stock prices
     stocksWithRefreshIntervals.forEach((stock, index) => {
       if (interval.has(stock.T)) {
