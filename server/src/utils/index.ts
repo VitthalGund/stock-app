@@ -29,8 +29,6 @@ export const storeDataInFile = async (data: any) => {
 
     await fs.promises.writeFile(pathOfData, newData, "utf-8");
     mutex.release();
-    // Uncomment the line below if you want to log the result
-    // console.log('Data written successfully');
   } catch (error: any) {
     console.error("Error writing data to file:", error.message);
   }
@@ -65,6 +63,7 @@ export const fetchStockPrices = async (): Promise<stockList> => {
     await mutex.waitForUnlock();
   }
   await mutex.acquire();
+
   let stock: stockList = [];
   const rawData = await fs.promises.readFile(pathOfData);
   const stringData = rawData.toString().trim();
@@ -72,9 +71,8 @@ export const fetchStockPrices = async (): Promise<stockList> => {
     return await readBackUp();
   }
   stock = JSON.parse(stringData);
-  // console.log(data);
-  // console.log("utils fetchStockPrices: " + typeof data);
   mutex.release();
+
   return stock;
 };
 
@@ -86,5 +84,6 @@ export const readBackUp = async () => {
   const fileData = await fs.promises.readFile(pathOfDataBackUp);
   const stringData = fileData.toString().trim();
   mutex.release();
+
   return JSON.parse(stringData);
 };

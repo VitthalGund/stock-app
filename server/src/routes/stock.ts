@@ -36,8 +36,7 @@ router.post("/info", async (req: express.Request, res: express.Response) => {
         refreshInterval: refreshIntervals[index],
       })
     );
-    // console.log("route.ts GET:'/': " + typeof stocksWithRefreshIntervals);
-    // console.log(stocksWithRefreshIntervals);
+
     // Store data in the backend file
     await storeDataInFile(stocksWithRefreshIntervals);
     // Set up interval to update stock prices

@@ -3,7 +3,6 @@ import { fetchStockPrices } from "../utils";
 import { stockList } from "../types/stock";
 
 // Function to fetch stock data from Polygon API
-// Promise<stockList>
 export const fetchStockData = async (n: number) => {
   try {
     const date = new Date();
@@ -12,10 +11,9 @@ export const fetchStockData = async (n: number) => {
         date.getDay() - 1
       }?apiKey=${process.env.PolygonAPIKey}&limit=${n}`
     );
-    // console.log(response.data);
+
     return response.data.results;
   } catch (error: any) {
-    // console.log("controller: " + error.message);
     return await fetchStockPrices();
   }
 };
