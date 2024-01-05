@@ -8,10 +8,12 @@ import {
   updateStockPrice,
 } from "../utils";
 import { stock, stockList } from "../types/stock";
+import NodeCache from "node-cache";
 const router = express.Router();
+const cache = new NodeCache();
 
 const interval = new Map<string, NodeJS.Timeout>();
-
+const intervalID: NodeJS.Timeout[] = [];
 router.post("/info", async (req: express.Request, res: express.Response) => {
   try {
     let { no } = req.body;
@@ -19,6 +21,14 @@ router.post("/info", async (req: express.Request, res: express.Response) => {
       return res
         .status(400)
         .json({ message: "missing number", success: false });
+    }
+
+    if (cache.has("interval")) {
+      let ID: NodeJS.Timeout[] | undefined = cache.get("interval");
+      if (!ID) {
+        return;
+      }
+      ID.map((item) => clearInterval(item));
     }
 
     let stockData: stockList = await fetchStockData(no);
@@ -55,6 +65,8 @@ router.post("/info", async (req: express.Request, res: express.Response) => {
         interval.delete(stock.T);
       }, stock.refreshInterval * 1000); // Convert refreshInterval to milliseconds
       interval.set(stock.T, id);
+      intervalID.push(id);
+      cache.set("interval", intervalID);
     });
     // Initial response with historical stock data
     res.json(stocksWithRefreshIntervals);

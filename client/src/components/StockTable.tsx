@@ -11,6 +11,7 @@ const StockTable = () => {
     const [num, setNum] = useState<number>(0);
     const [clicked, setClicked] = useState<boolean>(false)
     const abort = new AbortController()
+    const ids: number[] = []
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const assigndata = (resp: AxiosResponse<any, any>) => {
         const data: stock[] = resp.data.map((data: stock) => {
@@ -36,6 +37,7 @@ const StockTable = () => {
             }
             setClicked(false)
             setNum(number);
+            setStock([])
             const resp = await toast.promise(axios.post(`/stocks/info`, {
                 no: num
             }, { signal: abort.signal }), {
@@ -43,7 +45,7 @@ const StockTable = () => {
                 success: "stock information fetech Successfully",
                 error: "unable get stock information",
             });
-            console.log(resp)
+
             assigndata(resp)
             setClicked(true)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,6 +56,7 @@ const StockTable = () => {
 
 
     useEffect(() => {
+
         const id = setInterval(async () => {
             if (!number) {
                 return;
@@ -76,8 +79,12 @@ const StockTable = () => {
             }
         }, 1000)
 
-        if (!clicked) clearInterval(id);
-    }, [clicked, number, num])
+        ids.push(id)
+        if (!clicked) {
+            ids.map(item => clearInterval(item))
+        }
+    }, [clicked])
+
 
 
     return (
@@ -94,6 +101,7 @@ const StockTable = () => {
                                     <div className="relative w-full">
                                         <input type="text" id="simple-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                             placeholder="Enter the Number"
+                                            inputMode="numeric"
                                             onChange={(e) => setNumber(Number(e.target.value))}
                                             required />
                                     </div>
