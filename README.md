@@ -28,7 +28,7 @@ The project follows a microservices architecture with a RESTful API. The backend
 ## How to Use
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/stock-listing-app.git
+   git clone https://github.com/VitthalGund/stock-listing-app.git
    cd stock-listing-app
    ```
 
